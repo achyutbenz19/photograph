@@ -48,33 +48,30 @@ async def insert_relations(documents: List[Document], relations: List[dict]):
 
 async def insert_node(data: str, metadata: Optional[Dict[str, Any]] = None) -> str:
     # Check if a node with the same data already exists
-    response = client.from_("nodes").select("id").eq("data", data).single().execute()
-    logger.debug(f"{response=}")
-    existing_node = response.data
+    response = client.from_("nodes").select("id").eq("data", data).limit(1).execute()
+    logger.debug(f"node: {response=}")
+    existing_node = None if len(response.data) == 0 else response.data[0]
 
     if existing_node:
         # Node already exists, return the existing node ID
         return existing_node["id"]
     else:
         # Insert a new node
-        response = client.from_("nodes").insert({"data": data, "metadata": metadata}).select().single().execute()
-        inserted_node = response.data
-        insert_error = response.error
-
-        if insert_error:
-            raise insert_error
+        response = client.from_("nodes").upsert({"data": data, "metadata": metadata}).execute()
+        logger.debug(f"Upsert Node: {response=}")
+        inserted_node = None if len(response.data) == 0 else response.data[0]
 
         return inserted_node["id"]
 
 async def insert_edge(data: str, from_node_data: str, to_node_data: str, page_content: str, metadata: Optional[Dict[str, Any]] = None) -> str:
     # Get the IDs of the source and target nodes
-    from_node_id = insert_node(from_node_data)
-    to_node_id = insert_node(to_node_data)
+    from_node_id = await insert_node(from_node_data)
+    to_node_id = await insert_node(to_node_data)
 
     # Check if an edge with the same data already exists
-    response = client.from_("edges").select("id").eq("data", data).single().execute()
-    logger.debug(f"{response=}")
-    existing_edge = response.data
+    response = client.from_("edges").select("id").eq("data", data).execute()
+    logger.debug(f"edge: {response=}")
+    existing_edge = None if len(response.data) == 0 else response.data[0]
 
     if existing_edge:
         # Edge already exists, return the existing edge ID
@@ -87,8 +84,9 @@ async def insert_edge(data: str, from_node_data: str, to_node_data: str, page_co
             "to": to_node_id,
             "page_content": page_content,
             "metadata": metadata
-        }).select().single().execute()
-        inserted_edge = response.data
+        }).execute()
+        logger.debug(f"Upsert edge: {response=}")
+        inserted_edge = None if len(response.data) == 0 else response.data[0]
 
         return inserted_edge["id"]
 
@@ -100,8 +98,8 @@ async def filter_new_documents(documents: List[Document]) -> List[Document]:
         batch = documents[i:i + batch_size]
         page_contents = [doc.page_content for doc in batch]
 
-        response = client.from_("edges").select().filter("page_content", "in", page_contents).execute()
-        logger.debug(f"{response=}")
+        response = client.from_("edges").select().in_("page_content", page_contents).execute()
+        logger.debug(f"filter: {response=}")
         existing_edges = response.data
 
         existing_page_contents = set(edge["page_content"] for edge in existing_edges)

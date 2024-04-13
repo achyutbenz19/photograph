@@ -56,9 +56,10 @@ async def extract_one(prompt: str = EXTRACT_PROMPT, path: str = None, type: str 
     return request
 
 async def generate_content(request) -> str:
-    logger.debug(f"{request=}")
     response = LLM.generate_content(request)
-    return response.candidates[0].content.parts[0].text
+    text = response.candidates[0].content.parts[0].text
+    logger.debug(f"{text=}")
+    return text
 
 async def extract_batch(paths: List[str], types: List[str] = [], prompt: str = EXTRACT_PROMPT, batch_size: int = 5):
     semaphore = asyncio.Semaphore(batch_size)
