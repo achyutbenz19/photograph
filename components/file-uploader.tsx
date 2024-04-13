@@ -131,10 +131,7 @@ const FileUploader = ({ focus }: FileUploaderProps) => {
               Browse
             </div>
           ) : (
-            <Button
-              onClick={() => handleUpload()}
-              className="text-sm"
-            >
+            <Button onClick={() => handleUpload()} className="text-sm">
               Upload
             </Button>
           )}
