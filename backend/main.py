@@ -32,7 +32,7 @@ app.add_middleware(
 
 
 @app.get("/")
-async def root() -> dict:
+async def root() -> str:
     """
     Root endpoint that provides basic statistics of the application.
 
