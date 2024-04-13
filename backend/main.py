@@ -1,8 +1,12 @@
 from fastapi import FastAPI
+from typing import List
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import File, UploadFile, HTTPException
-from database import get_all_edges, get_all_nodes
+from database import get_all_edges, get_all_nodes, insert_relations
+from langchain.docstore.document import Document
+from extract import extract_batch
+from helpers import save_file
 from time import time
 import json
 
@@ -40,24 +44,44 @@ async def root() -> dict:
 
 
 @app.post("/add")
-async def upload_content(file: UploadFile = File(...)):
+async def upload_content(files: List[UploadFile] = File(...)):
     """
-    Endpoint for uploading content to the platform.
+    Endpoint for uploading multiple files to the platform.
     """
     MAX_FILE_SIZE = 20 * 1024 * 1024  # 20 MB in bytes
     ALLOWED_TYPES = ["image/png", "video/mp4"]
-    content_type = file.content_type
-    if content_type not in ALLOWED_TYPES:
-        raise HTTPException(
-            status_code=415, detail="Invalid file type. Only PNG images and MP4 videos are allowed.")
-    file_content = await file.read()
+
+    file_paths = []
+    file_types = []
+    for file in files:
+        content_type = file.content_type
+        if content_type not in ALLOWED_TYPES:
+            raise HTTPException(
+                status_code=415,
+                detail="Invalid file type. Only PNG images and MP4 videos are allowed."
+            )
 
 
 
-    # Check if file size exceeds the maximum limit
-    if len(file_content) > MAX_FILE_SIZE:
-        raise HTTPException(
-            status_code=413, detail="File size exceeds the maximum limit of 20 MB.")
+        # # Check if file size exceeds the maximum limit
+        # if len(file_content) > MAX_FILE_SIZE:
+        #     raise HTTPException(
+        #         status_code=413,
+        #         detail="File size exceeds the maximum limit of 20 MB."
+        #     )
+
+        file_content = await file.read()
+        file_type = content_type.split("/")[0]
+        file_path = save_file(file_content, file_type)
+        file_paths.append(file_path)
+        file_types.append(file_type)
+
+    ### Extract, pre proccess, insert
+    relations = await extract_batch(file_paths, file_types)
+    # Add any additional metadata later
+    documents = [Document(page_content=path) for path in file_paths]
+    await insert_relations(documents, relations)
+    ###
 
     return "Success"
 
