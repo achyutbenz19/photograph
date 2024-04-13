@@ -17,7 +17,7 @@ const FileUploader = ({ focus }: FileUploaderProps) => {
     if (event.target.files) {
       const selectedFiles = Array.from(event.target.files);
       const newFilteredFiles = selectedFiles.filter((file) => {
-        if (!["video/mp4", "image/jpeg"].includes(file.type)) {
+        if (!["video/mp4", "image/png"].includes(file.type)) {
           toast.error(`Unsupported file type: ${file.name}`);
           return false;
         }
@@ -61,9 +61,9 @@ const FileUploader = ({ focus }: FileUploaderProps) => {
     if (event.dataTransfer.files.length) {
       const droppedFiles = Array.from(event.dataTransfer.files);
       const filteredFiles = droppedFiles.filter((file) => {
-        if (!["video/mp4", "image/jpeg"].includes(file.type)) {
+        if (!["video/mp4", "image/png"].includes(file.type)) {
           toast.error(
-            `Please drop an MP4 or JPG file. ${file.name} is not allowed.`,
+            `Please drop an MP4 or PNG file. ${file.name} is not allowed.`,
           );
           return false;
         }
@@ -82,7 +82,7 @@ const FileUploader = ({ focus }: FileUploaderProps) => {
       ? "Drop files here"
       : files.length > 0
         ? `${files.length} file(s) ready to upload`
-        : "Drag and drop MP4 or JPG files here, or click to browse";
+        : "Drag and drop MP4 or PNG files here, or click to browse";
 
   return (
     <div className="p-2 h-full">
@@ -139,7 +139,7 @@ const FileUploader = ({ focus }: FileUploaderProps) => {
             type="file"
             id="file-upload"
             multiple
-            accept=".mp4, .jpg"
+            accept=".mp4, .png"
             onChange={handleFileChange}
             className="hidden"
           />
