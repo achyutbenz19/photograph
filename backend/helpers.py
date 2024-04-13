@@ -101,16 +101,21 @@ def stoj(string: str) -> list:
 
 def save_file(bytes_data: bytes, content_type: str) -> str:
     '''Save file and return local file path'''
+    type_dict = {
+        'image':'png',
+        'video':'mp4'
+    }
+    logger.debug(f"{content_type=}")
     file_extension = content_type.split('/')[-1]
     
-    files = os.listdir("public")
+    files = os.listdir("../public")
     
     numbers = [int(file.split('.')[0]) for file in files if file.split('.')[0].isdigit()]
     
     max_number = max(numbers) if numbers else 0
     
     file_name = f"{max_number + 1}.{file_extension}"
-    file_path = os.path.join("public", file_name)
+    file_path = os.path.join("../public", file_name)
     
     with open(file_path, "wb") as file:
         file.write(bytes_data)

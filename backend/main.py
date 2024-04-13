@@ -71,7 +71,7 @@ async def upload_content(files: List[UploadFile] = File(...)):
         #     )
 
         file_content = await file.read()
-        file_type = content_type.split("/")[0]
+        file_type = content_type
         file_path = save_file(file_content, file_type)
         file_paths.append(file_path)
         file_types.append(file_type)
