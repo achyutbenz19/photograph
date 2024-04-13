@@ -1,37 +1,33 @@
 "use client";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import { getEdges, getNodes } from "../api/endpoints";
 
 const Graph = dynamic(() => import("../../components/graph"), {
   ssr: false,
 });
 
 const ForceGraphComponent = () => {
-  const [graph, setGraph] = useState(null);
-  const [files, setFiles] = useState(null);
+  const [nodes, setNodes] = useState(null);
+  const [edges, setEdges] = useState(null);
 
   useEffect(() => {
-    const fetchFiles = async () => {
+    const fetchNodesAndEdges = async () => {
       try {
-        // const graphData = await getGraph();
-        // setGraph(graphData);
-      } catch (error) {
-        console.error("Error fetching graph files:", error);
-      }
-    }
-    const fetchGraph = async () => {
-      try {
-        // const graphData = await getGraph();
-        // setGraph(graphData);
+        const nodeResponse = await getNodes();
+        const edgeResponse = await getEdges();
+        setNodes(nodeResponse);
+        setEdges(edgeResponse);
       } catch (error) {
         console.error("Error fetching graph data:", error);
       }
     };
 
-    fetchFiles();
-    fetchGraph();
+    fetchNodesAndEdges();
   }, []);
 
+  console.log(nodes);
+  console.log(edges);
   return (
     <div className="max-h-screen">
       <Graph />
