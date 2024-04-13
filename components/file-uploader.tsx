@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { FileUploaderProps } from "@/types";
 import Files from "./files";
 import { Button } from "./ui/button";
+import { addFile } from "@/app/api/endpoints";
 
 const FileUploader = ({ focus }: FileUploaderProps) => {
   const [files, setFiles] = useState<File[]>([]);
@@ -32,8 +33,9 @@ const FileUploader = ({ focus }: FileUploaderProps) => {
 
   const handleUpload = async () => {
     try {
-      console.log(files);
       setUploading(true);
+      await addFile(files);
+      toast.success("Uploaded!")
     } catch (err) {
       toast.error("Internal Server Error");
     } finally {
