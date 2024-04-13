@@ -4,9 +4,10 @@ import React, { useState } from "react";
 import { toast } from "sonner";
 import { FileUploaderProps } from "@/types";
 import Files from "./files";
-import Link from "next/link";
+import { Button } from "./ui/button";
 
-const FileUploader = ({ focus, setFiles, files }: FileUploaderProps) => {
+const FileUploader = ({ focus }: FileUploaderProps) => {
+  const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
 
@@ -25,15 +26,14 @@ const FileUploader = ({ focus, setFiles, files }: FileUploaderProps) => {
 
       if (newFilteredFiles.length > 0) {
         setFiles((prevFiles) => [...prevFiles, ...newFilteredFiles]);
-        newFilteredFiles.forEach((file) => handleUpload(file));
       }
     }
   };
 
-  const handleUpload = async (file: File) => {
+  const handleUpload = async () => {
     try {
+      console.log(files);
       setUploading(true);
-      // You should implement the actual upload logic here
     } catch (err) {
       toast.error("Internal Server Error");
     } finally {
@@ -72,7 +72,6 @@ const FileUploader = ({ focus, setFiles, files }: FileUploaderProps) => {
 
       if (filteredFiles.length > 0) {
         setFiles(filteredFiles);
-        filteredFiles.forEach((file) => handleUpload(file));
       }
     }
   };
@@ -82,7 +81,7 @@ const FileUploader = ({ focus, setFiles, files }: FileUploaderProps) => {
     : isDragOver
       ? "Drop files here"
       : files.length > 0
-        ? `${files.length} file(s) uploaded`
+        ? `${files.length} file(s) ready to upload`
         : "Drag and drop MP4 or JPG files here, or click to browse";
 
   return (
@@ -112,26 +111,30 @@ const FileUploader = ({ focus, setFiles, files }: FileUploaderProps) => {
           />
           <span
             className={cn(
-              "text-sm text-neutral-400 duration-500 transition-all dark:text-neutral-300",
+              "text-sm text-neutral-400 text-center duration-500 transition-all dark:text-neutral-300",
               focus && "font-bold text-neutral-800 dark:text-neutral-300",
             )}
           >
             {labelText}
           </span>
-          <div
-            className={cn(
-              "border dark:border-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-700 px-2 duration-500 transition-all py-1.5 rounded-lg",
-              focus && "border-2 border-neutral-600 dark:border-neutral-300",
-            )}
-          >
-            {files.length == 0 ? (
-              "Browse"
-            ) : (
-              <Link className="text-sm" href="graph">
-                Graph
-              </Link>
-            )}
-          </div>
+          {files.length == 0 ? (
+            <div
+              className={cn(
+                "border dark:border-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-700 px-2 duration-500 transition-all py-1.5 rounded-lg",
+                focus && "border-2 border-neutral-600 dark:border-neutral-300",
+              )}
+            >
+              Browse
+            </div>
+          ) : (
+            <Button
+              variant="secondary"
+              onClick={() => handleUpload()}
+              className="text-sm"
+            >
+              Upload
+            </Button>
+          )}
           <input
             type="file"
             id="file-upload"

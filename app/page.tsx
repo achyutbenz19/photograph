@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useState } from "react";
 
 export default function Component() {
-  const [files, setFiles] = useState<File[]>([]);
   const [focus, setFocus] = useState(false);
 
   const handleStart = () => {
@@ -27,17 +26,11 @@ export default function Component() {
               </p>
             </div>
             <div className="flex flex-col gap-2 min-[400px]:flex-row">
-              {files.length == 0 ? (
-                <Button onClick={handleStart}>Get Started</Button>
-              ) : (
-                <Link href="graph">
-                  <Button>Graph</Button>
-                </Link>
-              )}
+              <Button onClick={handleStart}>Get Started</Button>
             </div>
           </div>
           <div className="mx-auto aspect-video rounded-xl object-cover object-center w-full lg:order-last lg:aspect-square">
-            <FileUploader files={files} setFiles={setFiles} focus={focus} />
+            <FileUploader focus={focus} />
           </div>
         </div>
       </div>
