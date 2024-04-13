@@ -41,8 +41,7 @@ async def extract_one(prompt: str = EXTRACT_PROMPT, path: str = None, type: str 
     type = type.split("/")[0]
     if type == 'video':
         logger.debug("Uploading video...")
-        saved_video_path = save_file(path)
-        frame_dir = extract_frame_from_video(saved_video_path)
+        frame_dir = extract_frame_from_video(path)
         uploaded_files = upload_files(frame_dir, genai)
         request = make_request(prompt, uploaded_files)
         shutil.rmtree(FRAME_EXTRACTION_DIRECTORY)

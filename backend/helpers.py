@@ -6,7 +6,7 @@ import os
 import shutil
 
 # Create or cleanup existing extracted image frames directory.
-FRAME_EXTRACTION_DIRECTORY = "/content/frames"
+FRAME_EXTRACTION_DIRECTORY = "../frames"
 FRAME_PREFIX = "_frame"
 
 def create_frame_output_dir(output_dir):
