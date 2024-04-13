@@ -8,7 +8,7 @@ const Files = ({ files, setFiles }: FilesProps) => {
   }, []);
 
   return (
-    <div className="w-full flex flex-wrap gap-1.5 flex-row">
+    <div className="w-full flex flex-wrap gap-2 flex-row">
       {files.map((file, index) => (
         <div
           className="border border-neutral-700 hover:bg-[#dfe8f7] z-10 shadow-sm bg-[#D2E3FC] items-center justify-center rounded-lg p-2 flex flex-row space-x-1"
