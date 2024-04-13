@@ -94,7 +94,7 @@ const FileUploader = ({ focus }: FileUploaderProps) => {
           focus && "border-neutral-800",
         )}
       >
-        <div className="w-full m-2">
+        <div className="w-full m-3">
           <Files files={files} setFiles={setFiles} />
         </div>
         <label
