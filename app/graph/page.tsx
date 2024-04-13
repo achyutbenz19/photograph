@@ -24,7 +24,7 @@ const ForceGraphComponent = () => {
 
   return (
     <div className="max-h-screen">
-      <Graph graph={graph} />
+      <Graph />
     </div>
   );
 };

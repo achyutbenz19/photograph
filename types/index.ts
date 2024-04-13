@@ -9,10 +9,11 @@ export type FilesProps = {
 
 export type Node = {
   id: number;
-  img: string;
+  type: string;
+  content: string;
 };
 
 export type Link = {
-  source: number;
-  target: number;
+  source: any;
+  target: any;
 };
