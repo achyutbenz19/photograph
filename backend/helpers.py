@@ -96,7 +96,7 @@ def stoj(string: str) -> list:
         try:
             return json.loads(string)
         except json.JSONDecodeError as error:
-            logger.error(f"JSON parsing failed: {str(error)}")
+            logger.error(f"JSON parsing failed. Response: {string}")
             return []
 
 def save_file(bytes_data: bytes, content_type: str) -> str:

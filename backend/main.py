@@ -3,12 +3,10 @@ from typing import List
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import File, UploadFile, HTTPException
-from database import get_all_edges, get_all_nodes, insert_relations
+from database import get_all_edges, get_all_nodes, insert_relations, filter_new_documents
 from langchain.docstore.document import Document
 from extract import extract_batch
 from helpers import save_file
-from time import time
-import json
 
 
 @asynccontextmanager
@@ -80,6 +78,7 @@ async def upload_content(files: List[UploadFile] = File(...)):
     relations = await extract_batch(file_paths, file_types)
     # Add any additional metadata later
     documents = [Document(page_content=path) for path in file_paths]
+    documents = await filter_new_documents(documents)
     await insert_relations(documents, relations)
     ###
 
@@ -89,10 +88,10 @@ async def upload_content(files: List[UploadFile] = File(...)):
 @app.get("/nodes")
 async def get_nodes():
     nodes = await get_all_nodes()
-    pass
+    return nodes
 
 
 @app.get("/edges")
 async def get_edges():
     edges = await get_all_edges()
-    pass
+    return edges
