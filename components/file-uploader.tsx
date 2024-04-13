@@ -90,8 +90,8 @@ const FileUploader = ({ focus }: FileUploaderProps) => {
     <div className="p-2 h-full">
       <div
         className={cn(
-          "h-full rounded-lg duration-500 transition-all border-dashed border-neutral-300 dark:border-neutral-700 border-2",
-          focus && "border-neutral-800 dark:border-neutral-300",
+          "h-full rounded-lg duration-500 transition-all border-dashed border-neutral-700 border-2",
+          focus && "border-neutral-800",
         )}
       >
         <div className="w-full m-2">
@@ -107,13 +107,13 @@ const FileUploader = ({ focus }: FileUploaderProps) => {
         >
           <Plus
             className={cn(
-              "h-10 w-10 text-neutral-500 duration-500 transition-all",
+              "h-10 w-10 text-neutral-700 duration-500 transition-all",
               focus && "font-extrabold text-neutral-700 dark:text-neutral-300",
             )}
           />
           <span
             className={cn(
-              "text-sm text-neutral-400 text-center duration-500 transition-all dark:text-neutral-300",
+              "text-sm text-neutral-700 text-center duration-500 transition-all dark:text-neutral-300",
               focus && "font-bold text-neutral-800 dark:text-neutral-300",
             )}
           >
@@ -122,7 +122,7 @@ const FileUploader = ({ focus }: FileUploaderProps) => {
           {files.length == 0 ? (
             <div
               className={cn(
-                "border dark:border-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-700 px-2 duration-500 transition-all py-1.5 rounded-lg",
+                "border  border-neutral-700 hover:bg-neutral-100 px-3 duration-500 transition-all py-1.5 rounded-lg",
                 focus && "border-2 border-neutral-600 dark:border-neutral-300",
               )}
             >
@@ -130,7 +130,6 @@ const FileUploader = ({ focus }: FileUploaderProps) => {
             </div>
           ) : (
             <Button
-              variant="secondary"
               onClick={() => handleUpload()}
               className="text-sm"
             >

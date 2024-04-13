@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${GeistSans.className} selection:bg-[#CEEAD6]`}>
+      <body className={`${GeistSans.className} bg-[#FEEFC3] selection:bg-[#CEEAD6]`}>
         {children}
       </body>
       <Toaster />

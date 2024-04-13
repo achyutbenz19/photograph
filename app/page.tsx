@@ -21,12 +21,12 @@ export default function Component() {
               <h1 className="font-bold tracking-tighter text-6xl">
                 photograph
               </h1>
-              <p className="max-w-[600px] text-neutral-500 md:text-xl dark:text-neutral-400">
+              <p className="max-w-[600px] text-neutral-600 md:text-xl">
                 interact with your memories
               </p>
             </div>
             <div className="flex flex-col gap-2 min-[400px]:flex-row">
-              <Button onClick={handleStart}>Get Started</Button>
+              <Button size="lg" onClick={handleStart}>Get Started</Button>
             </div>
           </div>
           <div className="mx-auto aspect-video rounded-xl object-cover object-center w-full lg:order-last lg:aspect-square">
