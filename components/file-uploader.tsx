@@ -89,7 +89,7 @@ const FileUploader = ({ focus }: FileUploaderProps) => {
         : "Drag and drop MP4 or PNG files here, or click to browse";
 
   return (
-    <div className="p-2 h-full">
+    <div className="p-2 z-20 h-full">
       <div
         className={cn(
           "h-full rounded-lg duration-500 transition-all border-dashed border-neutral-500 border-2",
