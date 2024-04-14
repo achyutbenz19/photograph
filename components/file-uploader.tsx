@@ -1,14 +1,15 @@
+"use client";
 import { cn } from "@/lib/utils";
 import { Plus } from "lucide-react";
 import React, { useState } from "react";
 import { toast } from "sonner";
-import { FileUploaderProps } from "@/types";
 import Files from "./files";
 import { Button } from "./ui/button";
 import { addFile } from "@/app/api/endpoints";
 import { redirect } from "next/navigation";
 
-const FileUploader = ({ focus }: FileUploaderProps) => {
+const FileUploader = () => {
+  const focus = false;
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
@@ -92,7 +93,7 @@ const FileUploader = ({ focus }: FileUploaderProps) => {
     <div className="p-2 z-20 h-full">
       <div
         className={cn(
-          "h-full rounded-lg duration-500 transition-all border-dashed border-neutral-500 border-2",
+          "h-full rounded-lg duration-500 z-30 transition-all border-dashed border-neutral-500 border-2",
           focus && "border-neutral-800",
         )}
       >
@@ -100,7 +101,7 @@ const FileUploader = ({ focus }: FileUploaderProps) => {
           <Files files={files} setFiles={setFiles} />
         </div>
         <label
-          className="flex flex-col w-full h-full items-center justify-center p-4 space-y-2 cursor-pointer"
+          className="flex flex-col z-[9999] w-full h-full items-center justify-center p-4 space-y-2 cursor-pointer"
           htmlFor="file-upload"
           onDragOver={handleDragOver}
           onDragEnter={handleDragEnter}
@@ -124,7 +125,7 @@ const FileUploader = ({ focus }: FileUploaderProps) => {
           {files.length == 0 ? (
             <div
               className={cn(
-                "border  border-neutral-500 hover:bg-neutral-100 px-3 duration-500 transition-all py-1.5 rounded-lg",
+                "border z-30 border-neutral-500 hover:bg-neutral-100 px-3 duration-500 transition-all py-1.5 rounded-lg",
                 focus && "border-2 border-neutral-600 dark:border-neutral-300",
               )}
             >
