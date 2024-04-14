@@ -1,8 +1,11 @@
 import { getEdges, getNodes } from "@/app/api/endpoints";
 import { useModal } from "@/hooks/use-modal-store";
+import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { ForceGraph3D } from "react-force-graph";
+import { Button } from "./ui/button";
+import Link from "next/link";
 
 const GraphComponent = () => {
   const fgRef = useRef<any>();
@@ -76,9 +79,14 @@ const GraphComponent = () => {
 
   return (
     <div className="max-h-screen">
-      <div className="z-20 absolute flex flex-col space-y-2 top-0 left-0 text-white h-20 m-2">
+      <Link href="/" className="absolute z-20 m-2 bottom-0 left-0">
+        <Button className="bg-transparent">
+          <ArrowLeft />
+        </Button>
+      </Link>
+      <div className="z-20 font-semibold absolute flex flex-col space-y-2 top-0 left-0 text-white h-20 m-2">
         <h2 className="text-5xl capitalize">{hover?.node?.description}</h2>
-        <h4 className="">
+        <h4 className="space-y-1 text-lg">
           {hover &&
             findConnections(hover?.node?.id)?.map(
               (relation: any, index: number) => (
