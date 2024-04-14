@@ -56,17 +56,29 @@ export function PhotoModal() {
             {data &&
               consolidateData(data).map((value: any, index: number) => (
                 <CarouselItem
-                  className="flex flex-col text-center space-y-8 w-[50%] mx-auto items-center justify-center text-white"
+                  className="flex flex-col text-center w-[50%] mx-auto items-center justify-center text-white"
                   key={index}
                 >
                   <h3 className="text-3xl w-[70%]">{value.connection}</h3>
-                  <Image
-                    className="rounded-2xl object-contain"
-                    src={`/${value.data}`}
-                    alt={`${value.data}`}
-                    height={250}
-                    width={250}
-                  />
+                  {value.data.endsWith(".mp4") ? (
+                    <iframe
+                      className="rounded-2xl object-contain"
+                      src={`/${value.data}`}
+                      frameBorder="0"
+                      allow="autoplay; encrypted-media"
+                      allowFullScreen
+                      height="500"
+                      width="600"
+                    ></iframe>
+                  ) : (
+                    <Image
+                      className="rounded-2xl my-8 object-contain"
+                      src={`/${value.data}`}
+                      alt={`${value.data}`}
+                      height={250}
+                      width={250}
+                    />
+                  )}
                   <h3 className="text-xl pt-4 w-[70%]">{value.description}</h3>
                 </CarouselItem>
               ))}
