@@ -54,7 +54,7 @@ SUMMARY_INFO_CHUNK = """\
 """
 
 SUMMARY_END_PROMPT = """\
-Make sure to keep it short, narrative 2nd POV format.\
+Your summary should be under 200 words, narrative 2nd POV format.\
 """
 
 def get_data_type(path: str):
