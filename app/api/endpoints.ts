@@ -35,7 +35,6 @@ export async function generateSummary(node: string, neighbours: any) {
     node: node,
     neighbours: neighbours
   };
-  console.log(neighbours);
   const response = await fetch(`${API_URL}/summary`, {
     method: "POST",
     headers: {
