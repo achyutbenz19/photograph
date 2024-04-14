@@ -15,8 +15,15 @@ You are a network graph maker who extracts terms and their relations from a give
 Your task is to extract the ontology of terms mentioned in the given context. \
 These terms should accurately capture the key concepts and actions represented in the image or video.
 Thought 1: While traversing, think about the key things in it.
-    The image may include actions, entities, locations, organizations, persons, 
-    emotions, relations, events, services, concepts, etc.
+    Identify the salient objects, people, and entities present in the image or video.
+    Recognize any actions, interactions, events taking place, or anything interesting that you see.
+    Detect relevant attributes such as colors, sizes, textures, and emotions associated with the visual elements.
+    Consider the spatial and compositional relationships among the elements.
+    Semantic Relationships:
+    Analyze the semantic connections between the identified terms.
+    Determine relationships such as object co-occurrence, functional associations, and contextual similarities.
+    Identify part-whole relationships, hierarchical structures, and object interactions.
+    Consider temporal relationships and object persistence in videos.
     Terms should be as atomistic and singular as possible.
 
 Thought 2: Think about how these terms can have one on one relation with other terms.
@@ -36,6 +43,38 @@ Format your output as a list of json. Each element of the list contains a pair o
 YOUR RESPONSE SHOULD ALWAYS BE JSON COMPATIBLE. Do not add markdown in your response, just plain JSON.\
 """
 
+SUMMARY_PROMPT = """\
+You are an expert narrator who writes summaries about people's lives. \
+You will be given memories, and other information about the human's life which you will \
+write a short summary description using 2nd point of view to talk about the human's life to the human. \
+The topic of the summary is: {node}
+"""
+SUMMARY_INFO_CHUNK = """\
+{connection}: {description}\
+"""
+
+SUMMARY_END_PROMPT = """\
+Make sure to keep it short, narrative 2nd POV format.\
+"""
+
+async def stream_summary(node: str, neighbours: List[Dict]):
+    prompts = [SUMMARY_PROMPT.format(node=node)]
+
+    data = dict()
+    for nei in neighbours:
+        if nei['data'] not in data:
+            data[nei['data']] = await extract_one(SUMMARY_INFO_CHUNK.format_map(nei), nei['data'])
+        else:
+            data[nei['data']].append(SUMMARY_INFO_CHUNK.format_map(nei))
+
+    for val in data.values():
+        prompts += val
+    
+    prompts += SUMMARY_END_PROMPT
+    
+    response = stream_content(prompts)
+    return response
+
 async def extract_one(prompt: str = EXTRACT_PROMPT, path: str = None, type: str = 'text'):
     logger.debug(f"{path=}, {type=}")
     type = type.split("/")[0]
@@ -50,15 +89,19 @@ async def extract_one(prompt: str = EXTRACT_PROMPT, path: str = None, type: str 
         uploaded_path = genai.upload_file(path)
         request = [prompt, uploaded_path]
     else:
-        logger.debug(f"Weird type")
         request = [prompt]
     return request
 
 async def generate_content(request) -> str:
-    response = LLM.generate_content(request)
+    response = await LLM.generate_content_async(request)
     text = response.candidates[0].content.parts[0].text
     logger.debug(f"{text=}")
     return text
+
+async def stream_content(request):
+    response = await LLM.generate_content_async(request, stream=True)
+    async for chunk in response:
+        yield chunk.text
 
 async def extract_batch(paths: List[str], types: List[str] = [], prompt: str = EXTRACT_PROMPT, batch_size: int = 5):
     semaphore = asyncio.Semaphore(batch_size)

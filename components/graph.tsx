@@ -85,7 +85,7 @@ const GraphComponent = () => {
       }
 
       try {
-        const response = await generateSummary(hover?.node?.description, hover.node.id);
+        const response = await generateSummary(hover?.node?.description, findConnections(hover?.node?.id));
         if (!response.body) {
           return;
         }
@@ -130,8 +130,8 @@ const GraphComponent = () => {
               ),
             )}
         </h4>
-        <h5 className="w-[30%]">
-          {hover && summary} asdasdasdnasldsaljkdal ksjdklasjasda sdasdnasl dsaljkdal ksjdklasjasd asdasdna sldsaljk dalksjdklasjas dasdasdn asldsa ljkda lksj dklasj
+        <h5 className="w-[20%]">
+          {hover && summary}
         </h5>
         {hover?.id}
         <br />

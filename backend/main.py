@@ -1,11 +1,13 @@
 from fastapi import FastAPI
-from typing import List
+from fastapi.responses import StreamingResponse
+from typing import List, Dict
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import File, UploadFile, HTTPException
 from database import get_all_edges, get_all_nodes, insert_relations, filter_new_documents
 from langchain.docstore.document import Document
-from extract import extract_batch
+from extract import extract_batch, stream_summary
+from pydantic import BaseModel
 from helpers import save_file
 
 
@@ -84,6 +86,17 @@ async def upload_content(files: List[UploadFile] = File(...)):
 
     return "Success"
 
+
+class Summary(BaseModel):
+    node: str
+    neighbours: List[Dict]
+
+@app.post("/summary")
+async def summary(data: Summary):
+    node = data.node
+    neighbours = data.neighbours
+    response = await stream_summary(node, neighbours)
+    return StreamingResponse(response)
 
 @app.get("/nodes")
 async def get_nodes():
