@@ -11,7 +11,7 @@ const GraphComponent = () => {
   const fgRef = useRef<any>();
   const [gData, setGData] = useState<any>(null);
   const [hover, setHover] = useState<any>([]);
-  const [summary, setSummary] = useState('')
+  const [summary, setSummary] = useState<any>('')
   const { onOpen } = useModal();
 
   useEffect(() => {
@@ -80,28 +80,13 @@ const GraphComponent = () => {
 
   useEffect(() => {
     const fetchSummary = async () => {
-      if (!hover?.node?.id) return;
+      if (!hover?.node?.id) {
+        return;
+      }
+      const generator = generateSummary(hover?.node.description, findConnections(hover.node.id));
 
-      try {
-        const response = await generateSummary(hover.node.description, findConnections(hover.node.id));
-        if (!response.body) return;
-
-        const reader = response.body.getReader();
-        let message = '';
-
-        const read = async () => {
-          const { done, value } = await reader.read();
-          if (done) {
-            setSummary(message);
-            return;
-          }
-          message += new TextDecoder().decode(value);
-          read();
-        };
-
-        read();
-      } catch (error) {
-        console.error('Failed to fetch summary:', error);
+      for await (const summary of await generator) {
+        setSummary((prev: any) => [...prev, summary]);
       }
     };
 

@@ -43,5 +43,18 @@ export async function generateSummary(node: string, neighbours: any) {
     body: JSON.stringify(data),
     credentials: "include",
   });
-  return response;
+
+  if (!response.body) {
+    throw new Error("Failed to generate summary");
+  }
+
+  const reader = response.body.getReader();
+  return (async function* () {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      yield new TextDecoder("utf-8").decode(value, { stream: true });
+    }
+  })();
+
 }
