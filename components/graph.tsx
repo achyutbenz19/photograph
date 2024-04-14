@@ -1,7 +1,7 @@
 import { generateSummary, getEdges, getNodes } from "@/app/api/endpoints";
 import { useModal } from "@/hooks/use-modal-store";
 import { ArrowLeft } from "lucide-react";
-import Image from "next/image";
+import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { ForceGraph3D } from "react-force-graph";
 import { Button } from "./ui/button";
@@ -80,38 +80,33 @@ const GraphComponent = () => {
 
   useEffect(() => {
     const fetchSummary = async () => {
-      if (!hover?.node?.id) {
-        return;
-      }
+      if (!hover?.node?.id) return;
 
       try {
-        const response = await generateSummary(hover?.node?.description, findConnections(hover?.node?.id));
-        if (!response.body) {
-          return;
-        }
+        const response = await generateSummary(hover.node.description, findConnections(hover.node.id));
+        if (!response.body) return;
 
         const reader = response.body.getReader();
         let message = '';
 
-        const processText = async ({ done, value }: ReadableStreamReadResult<Uint8Array>): Promise<void> => {
+        const read = async () => {
+          const { done, value } = await reader.read();
           if (done) {
             setSummary(message);
             return;
           }
-          const chunk = new TextDecoder().decode(value, { stream: true });
-          message += chunk;
-          return reader.read().then(processText);
+          message += new TextDecoder().decode(value);
+          read();
         };
 
-        reader.read().then(processText);
+        read();
       } catch (error) {
         console.error('Failed to fetch summary:', error);
       }
     };
 
     fetchSummary();
-  }, [hover]);
-
+  }, [hover?.node]);
 
   return (
     <div className="max-h-screen">
@@ -130,20 +125,16 @@ const GraphComponent = () => {
               ),
             )}
         </h4>
-        <h5 className="w-[20%]">
+        <motion.h5
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.75 }}
+          className="w-[20%]"
+        >
           {hover && summary}
-        </h5>
+        </motion.h5>
         {hover?.id}
         <br />
-        {hover && hover?.type === "image" && (
-          <Image
-            src={`/${hover?.content}`}
-            alt=""
-            className="mt-2"
-            height={100}
-            width={100}
-          />
-        )}
       </div>
       {gData && (
         <ForceGraph3D
