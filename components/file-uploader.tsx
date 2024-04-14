@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import Files from "./files";
 import { Button } from "./ui/button";
 import { addFile } from "@/app/api/endpoints";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 
 const FileUploader = () => {
   const focus = false;
@@ -32,15 +32,15 @@ const FileUploader = () => {
       }
     }
   };
-
+  const router = useRouter();
   const handleUpload = async () => {
     try {
       setUploading(true);
       await addFile(files);
       toast.success("Uploaded!");
-      redirect("/graph");
+      router.push('/graph')
+      setFiles([])
     } catch (err) {
-      toast.error("Internal Server Error");
     } finally {
       setUploading(false);
     }
@@ -132,7 +132,7 @@ const FileUploader = () => {
               Browse
             </div>
           ) : (
-            <Button onClick={() => handleUpload()} className="text-sm">
+            <Button onClick={() => handleUpload()} className="z-[9999] text-sm">
               Upload
             </Button>
           )}
