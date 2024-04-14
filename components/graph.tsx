@@ -101,15 +101,18 @@ const GraphComponent = () => {
       {gData && (
         <ForceGraph3D
           ref={fgRef}
+          showNavInfo={false}
           linkLabel="content"
           nodeLabel="description"
           graphData={gData!}
+          linkAutoColorBy="pageContent"
+          nodeAutoColorBy="id"
           onNodeClick={handleClick}
           onNodeHover={(node: any, edge: any) => {
             setHover({ node, edge });
           }}
           linkDirectionalParticles={hover ? 10 : 2}
-          linkWidth={1}
+          linkWidth={2}
         />
       )}
     </div>
