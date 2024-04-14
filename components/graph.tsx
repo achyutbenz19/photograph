@@ -1,12 +1,13 @@
 import { getEdges, getNodes } from "@/app/api/endpoints";
 import { useModal } from "@/hooks/use-modal-store";
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ForceGraph3D } from "react-force-graph";
 
 const GraphComponent = () => {
   const fgRef = useRef<any>();
   const [gData, setGData] = useState<any>(null);
+  const [hover, setHover] = useState<any>([]);
   const { onOpen } = useModal();
 
   useEffect(() => {
@@ -38,9 +39,12 @@ const GraphComponent = () => {
 
     fetchNodesAndEdges();
   }, []);
-  const [hover, setHover] = useState<any>([]);
 
-  const handleClick = useCallback((node: any) => {
+  useEffect(() => {
+    setGData(gData)
+  }, [gData])
+
+  const handleClick = (node: any) => {
     const distance = 40;
     const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
     fgRef.current?.cameraPosition(
@@ -49,16 +53,13 @@ const GraphComponent = () => {
       3000,
     );
     onOpen(findConnections(node?.id));
-  }, []);
-
-  console.log(gData)
+  };
 
   const findConnections = (id: string) => {
     const connections: any = [];
     if (gData !== null) {
       for (const connection of gData.links) {
         if (connection.source.id === id || connection.target.id === id) {
-          console.log(connection)
           connections.push({
             connection:
               id == connection.source.id
@@ -78,12 +79,12 @@ const GraphComponent = () => {
       <div className="z-20 absolute flex flex-col space-y-2 top-0 left-0 text-white h-20 m-2">
         <h2 className="text-5xl capitalize">{hover?.node?.description}</h2>
         <h4 className="">
-          {hover &&
+          {/* {hover &&
             findConnections(hover?.node?.id)?.map(
               (relation: any, index: number) => (
                 <div key={index}>{relation.connection}</div>
               ),
-            )}
+            )} */}
         </h4>
         {hover?.id}
         <br />
