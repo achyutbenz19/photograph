@@ -7,6 +7,7 @@ import { ForceGraph3D } from "react-force-graph";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { toast } from "sonner";
+import { TextGenerateEffect } from "./text-generator";
 
 const GraphComponent = () => {
   const fgRef = useRef<any>();
@@ -116,6 +117,8 @@ const GraphComponent = () => {
     fetchSummary();
   }, [hover?.node]);
 
+  console.log(summary)
+
   return (
     <div className="max-h-screen">
       <Link href="/" className="absolute z-20 m-2 bottom-0 left-0">
@@ -143,7 +146,7 @@ const GraphComponent = () => {
           className="relative w-[20%] flex flex-col space-y-0.5"
         >
           <span>{hover && hover.length !== 0 && "Summary"}</span>
-          <span className="font-light">{hover && hover.length !== 0 && summary}</span>
+          <span className="font-light">{hover && hover.length !== 0 && <TextGenerateEffect words={summary && summary.join('')} />}</span>
         </motion.h5>
         {hover?.id}
         <br />
