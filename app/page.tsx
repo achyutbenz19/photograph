@@ -8,11 +8,6 @@ import { useState } from "react";
 export default function Component() {
   const [focus, setFocus] = useState(false);
 
-  const handleStart = () => {
-    setFocus(true);
-    setTimeout(() => setFocus(false), 3000);
-  };
-
   return (
     <BackgroundGradientAnimation>
       <section className="h-screen flex sm:mx-5 md:mx-10 lg:mx-20 2xl:mx-0 flex-col justify-center items-center">
@@ -28,9 +23,11 @@ export default function Component() {
                 </p>
               </div>
               <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                <Button size="lg" onClick={handleStart}>
-                  Get Started
-                </Button>
+                <Link href="/graph">
+                  <Button size="lg">
+                    View your gallery
+                  </Button>
+                </Link>
               </div>
             </div>
             <div className="mx-auto aspect-video rounded-xl object-cover object-center w-full lg:order-last lg:aspect-square">
