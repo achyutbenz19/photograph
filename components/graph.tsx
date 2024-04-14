@@ -41,8 +41,8 @@ const GraphComponent = () => {
   }, []);
 
   useEffect(() => {
-    setGData(gData)
-  }, [gData])
+    setGData(gData);
+  }, [gData]);
 
   const handleClick = (node: any) => {
     const distance = 40;
@@ -66,7 +66,7 @@ const GraphComponent = () => {
                 ? connection.target.description
                 : connection.source.description,
             data: connection.pageContent,
-            description: connection.content
+            description: connection.content,
           });
         }
       }

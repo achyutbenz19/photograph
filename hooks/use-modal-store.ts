@@ -1,5 +1,5 @@
 export type ModalStore = {
-  data: any
+  data: any;
   isOpen: boolean;
   onOpen: (data?: any) => void;
   onClose: () => void;

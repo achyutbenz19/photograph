@@ -24,9 +24,7 @@ export default function Component() {
               </div>
               <div className="flex flex-col gap-2 min-[400px]:flex-row">
                 <Link href="/graph">
-                  <Button size="lg">
-                    View your gallery
-                  </Button>
+                  <Button size="lg">View your gallery</Button>
                 </Link>
               </div>
             </div>
