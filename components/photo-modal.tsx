@@ -64,10 +64,9 @@ export function PhotoModal() {
                     <iframe
                       className="rounded-2xl object-contain"
                       src={`/${value.data}`}
-                      frameBorder="0"
                       allow="autoplay; encrypted-media"
                       allowFullScreen
-                      height="500"
+                      height="400"
                       width="600"
                     ></iframe>
                   ) : (
