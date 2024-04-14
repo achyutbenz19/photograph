@@ -1,6 +1,6 @@
 import { generateSummary, getEdges, getNodes } from "@/app/api/endpoints";
 import { useModal } from "@/hooks/use-modal-store";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, CornerDownRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { ForceGraph3D } from "react-force-graph";
@@ -126,10 +126,13 @@ const GraphComponent = () => {
       <div className="z-20 font-semibold absolute flex flex-col space-y-2 top-0 left-0 text-white h-20 m-2">
         <h2 className="text-5xl capitalize">{hover?.node?.description}</h2>
         <h4 className="space-y-1 text-lg">
-          {hover &&
+          {hover && hover.length !== 0 &&
             findConnections(hover?.node?.id)?.map(
               (relation: any, index: number) => (
-                <div key={index}>{relation.connection}</div>
+                <div key={index} className="space-x-1.5 font-medium flex flex-row">
+                  <CornerDownRight />
+                  {relation.connection}
+                </div>
               ),
             )}
         </h4>
@@ -137,9 +140,10 @@ const GraphComponent = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.75 }}
-          className="relative w-[20%]"
+          className="relative w-[20%] flex flex-col space-y-0.5"
         >
-          {hover && summary}
+          <span>{hover && hover.length !== 0 && "Summary"}</span>
+          <span className="font-light">{hover && hover.length !== 0 && summary}</span>
         </motion.h5>
         {hover?.id}
         <br />
@@ -148,6 +152,7 @@ const GraphComponent = () => {
         <ForceGraph3D
           ref={fgRef}
           showNavInfo={false}
+          backgroundColor="#0f1010"
           linkLabel="content"
           nodeLabel="description"
           graphData={gData!}
@@ -156,7 +161,7 @@ const GraphComponent = () => {
           onNodeClick={handleClick}
           onNodeHover={handleNodeHover}
           linkDirectionalParticles={hover ? 10 : 2}
-          linkWidth={2}
+          linkWidth={3}
         />
       )}
     </div>
