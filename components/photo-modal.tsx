@@ -5,6 +5,7 @@ import {
 } from "@/components/ui/dialog";
 import { useModal } from "@/hooks/use-modal-store";
 import Image from "next/image";
+import { Carousel, CarouselPrevious, CarouselContent, CarouselItem, CarouselNext } from "./ui/carousel";
 
 export function PhotoModal() {
     const { isOpen, onClose, data } = useModal();
@@ -33,20 +34,25 @@ export function PhotoModal() {
             connection: entry.connections.join(', '),
             description: entry.description
         }));
-        console.log(result)
         return result;
     }
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="w-full border-2 text-white">
-                {data && consolidateData(data).map((value: any, index: number) => (
-                    <div className="flex flex-col text-white" key={index}>
-                        <h3 className="text-3xl">{value.connection}</h3>
-                        <Image src={`/${value.data}`} alt={`${value.data}`} height={100} width={100} />
-                        <h3 className="text-xl">{value.description}</h3>
-                    </div>
-                ))}
+            <DialogContent className="w-full text-white">
+                <Carousel className="flex items-center justify-center dark:bg-neutral-900 w-full dark:text-white text-black my-2 rounded-lg p-4 leading-relaxed drop-shadow-sm mr-auto lg:max-w-full">
+                    <CarouselPrevious className="ml-20 xl:ml-24" />
+                    <CarouselContent>
+                        {data && consolidateData(data).map((value: any, index: number) => (
+                            <CarouselItem className="flex flex-col text-center space-y-8 w-[50%] mx-auto items-center justify-center text-white" key={index}>
+                                <h3 className="text-3xl">{value.connection}</h3>
+                                <Image className=" border object-contain" src={`/${value.data}`} alt={`${value.data}`} height={250} width={250} />
+                                <h3 className="text-xl pt-4 w-[70%]">{value.description}</h3>
+                            </CarouselItem>
+                        ))}
+                    </CarouselContent>
+                    <CarouselNext className="xl:mr-24 mr-20" />
+                </Carousel>
             </DialogContent>
         </Dialog>
     );
