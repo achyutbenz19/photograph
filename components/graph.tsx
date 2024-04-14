@@ -12,7 +12,8 @@ const GraphComponent = () => {
   const fgRef = useRef<any>();
   const [gData, setGData] = useState<any>(null);
   const [hover, setHover] = useState<any>([]);
-  const [summary, setSummary] = useState<any>('')
+  const [summary, setSummary] = useState<any>('');
+  const [hoverTimeout, setHoverTimeout] = useState<any>(null);
   const { onOpen } = useModal();
 
   useEffect(() => {
@@ -44,6 +45,21 @@ const GraphComponent = () => {
 
     fetchNodesAndEdges();
   }, []);
+
+
+  const handleNodeHover = (node: any, prevNode: any) => {
+    if (node && !prevNode) {
+      const timer = setTimeout(() => {
+        setHoverTimeout(true);
+        setHover({ node, edge: null });
+      }, 1000);
+      setHoverTimeout(timer);
+    } else if (!node) {
+      clearTimeout(hoverTimeout);
+      setHoverTimeout(null);
+      setHover(null);
+    }
+  };
 
   useEffect(() => {
     setGData(gData);
@@ -138,9 +154,7 @@ const GraphComponent = () => {
           linkAutoColorBy="pageContent"
           nodeAutoColorBy="id"
           onNodeClick={handleClick}
-          onNodeHover={(node: any, edge: any) => {
-            setHover({ node, edge });
-          }}
+          onNodeHover={handleNodeHover}
           linkDirectionalParticles={hover ? 10 : 2}
           linkWidth={2}
         />
