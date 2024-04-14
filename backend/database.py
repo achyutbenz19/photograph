@@ -108,6 +108,47 @@ async def filter_new_documents(documents: List[Document]) -> List[Document]:
 
     return new_documents
 
+async def clean_graph():
+    # Step 1: Delete nodes with the same data and assign edges to one node
+    async def merge_duplicate_nodes():
+        # Retrieve all nodes grouped by their data
+        response = client.from_("nodes").select("data, id").order("data").execute()
+        logger.debug(f"merge: {response=}")
+        nodes: List[Dict[str, Any]] = response.data
+
+        # Create a dictionary to store the mapping of data to node ID
+        data_to_id: Dict[str, str] = {}
+
+        for node in nodes:
+            data = node["data"]
+            node_id = node["id"]
+
+            if data in data_to_id:
+                # If a node with the same data already exists, update the edges
+                # to point to the existing node and delete the current node
+                existing_node_id = data_to_id[data]
+
+                client.from_("edges").update({"from": existing_node_id}).eq("from", node_id).execute()
+                client.from_("edges").update({"to": existing_node_id}).eq("to", node_id).execute()
+                client.from_("nodes").delete().eq("id", node_id).execute()
+            else:
+                # If it's the first node with this data, store the mapping
+                data_to_id[data] = node_id
+
+    # Step 2: Delete nodes without any relationships
+    async def delete_isolated_nodes():
+        # Retrieve nodes that have no edges connected to them
+        response = await client.from_("nodes").select("id").not_.in_("id", client.rpc("get_connected_node_ids")).execute()
+        isolated_nodes: List[Dict[str, str]] = response.data
+
+        # Delete the isolated nodes
+        for node in isolated_nodes:
+            node_id = node["id"]
+            await client.from_("nodes").delete().eq("id", node_id)
+    
+    await merge_duplicate_nodes()
+    # await delete_isolated_nodes()
+
 async def get_all_nodes() -> List[Dict[str, Any]]:
     page_size = 600
     page = 0
@@ -115,7 +156,6 @@ async def get_all_nodes() -> List[Dict[str, Any]]:
 
     while True:
         response = client.from_("nodes").select("*").range(page * page_size, (page + 1) * page_size - 1).execute()
-        logger.debug(f"{response=}")
         page_nodes = response.data
 
         nodes.extend(page_nodes)
@@ -134,7 +174,6 @@ async def get_all_edges() -> List[Dict[str, Any]]:
 
     while True:
         response = client.from_("edges").select("*").range(page * page_size, (page + 1) * page_size - 1).execute()
-        logger.debug(f"{response=}")
         page_edges = response.data
 
         edges.extend(page_edges)

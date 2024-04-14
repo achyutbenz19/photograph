@@ -57,6 +57,17 @@ SUMMARY_END_PROMPT = """\
 Make sure to keep it short, narrative 2nd POV format.\
 """
 
+def get_data_type(path: str):
+    type_dict = {
+        'mp4': 'video',
+        'png': 'image',
+    }
+
+    if file_path:= type_dict.get(path.split("/")[1]):
+        return file_path
+    else:
+        return 'text'
+
 async def stream_summary(node: str, neighbours: List[Dict]):
     prompts = [SUMMARY_PROMPT.format(node=node)]
 

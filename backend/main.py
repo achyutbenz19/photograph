@@ -4,7 +4,7 @@ from typing import List, Dict
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import File, UploadFile, HTTPException
-from database import get_all_edges, get_all_nodes, insert_relations, filter_new_documents
+from database import get_all_edges, get_all_nodes, insert_relations, filter_new_documents, clean_graph
 from langchain.docstore.document import Document
 from extract import extract_batch, stream_summary
 from pydantic import BaseModel
@@ -82,6 +82,7 @@ async def upload_content(files: List[UploadFile] = File(...)):
     documents = [Document(page_content=path) for path in file_paths]
     documents = await filter_new_documents(documents)
     await insert_relations(documents, relations)
+    await clean_graph()
     ###
 
     return "Success"
