@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { ForceGraph3D } from "react-force-graph";
 import { Button } from "./ui/button";
 import Link from "next/link";
+import { toast } from "sonner";
 
 const GraphComponent = () => {
   const fgRef = useRef<any>();
@@ -80,13 +81,19 @@ const GraphComponent = () => {
 
   useEffect(() => {
     const fetchSummary = async () => {
+      setSummary("");
       if (!hover?.node?.id) {
         return;
       }
-      const generator = generateSummary(hover?.node.description, findConnections(hover.node.id));
 
-      for await (const summary of await generator) {
-        setSummary((prev: any) => [...prev, summary]);
+      try {
+        const generator = generateSummary(hover?.node.description, findConnections(hover.node.id));
+
+        for await (const summary of await generator) {
+          setSummary((prev: any) => [...prev, summary]);
+        }
+      } catch (error) {
+        toast.error("429 Resource has been exhausted (check quota)")
       }
     };
 
@@ -114,7 +121,7 @@ const GraphComponent = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.75 }}
-          className="w-[20%]"
+          className="relative w-[20%]"
         >
           {hover && summary}
         </motion.h5>
