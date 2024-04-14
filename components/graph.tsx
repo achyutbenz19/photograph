@@ -79,12 +79,12 @@ const GraphComponent = () => {
       <div className="z-20 absolute flex flex-col space-y-2 top-0 left-0 text-white h-20 m-2">
         <h2 className="text-5xl capitalize">{hover?.node?.description}</h2>
         <h4 className="">
-          {/* {hover &&
+          {hover &&
             findConnections(hover?.node?.id)?.map(
               (relation: any, index: number) => (
                 <div key={index}>{relation.connection}</div>
               ),
-            )} */}
+            )}
         </h4>
         {hover?.id}
         <br />
