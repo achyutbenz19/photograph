@@ -17,7 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${GeistSans.className} bg-[#FEEFC3] selection:bg-[#CEEAD6]`}
+        className={`${GeistSans.className} bg-[#FEEFC3] selection:text-black selection:bg-[#CEEAD6]`}
       >
         {children}
         <ModalProvider />

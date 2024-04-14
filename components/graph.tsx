@@ -1,4 +1,4 @@
-import { getEdges, getNodes } from "@/app/api/endpoints";
+import { generateSummary, getEdges, getNodes } from "@/app/api/endpoints";
 import { useModal } from "@/hooks/use-modal-store";
 import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
@@ -11,6 +11,7 @@ const GraphComponent = () => {
   const fgRef = useRef<any>();
   const [gData, setGData] = useState<any>(null);
   const [hover, setHover] = useState<any>([]);
+  const [summary, setSummary] = useState('')
   const { onOpen } = useModal();
 
   useEffect(() => {
@@ -77,6 +78,41 @@ const GraphComponent = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchSummary = async () => {
+      if (!hover?.node?.id) {
+        return;
+      }
+
+      try {
+        const response = await generateSummary(hover?.node?.description, hover.node.id);
+        if (!response.body) {
+          return;
+        }
+
+        const reader = response.body.getReader();
+        let message = '';
+
+        const processText = async ({ done, value }: ReadableStreamReadResult<Uint8Array>): Promise<void> => {
+          if (done) {
+            setSummary(message);
+            return;
+          }
+          const chunk = new TextDecoder().decode(value, { stream: true });
+          message += chunk;
+          return reader.read().then(processText);
+        };
+
+        reader.read().then(processText);
+      } catch (error) {
+        console.error('Failed to fetch summary:', error);
+      }
+    };
+
+    fetchSummary();
+  }, [hover]);
+
+
   return (
     <div className="max-h-screen">
       <Link href="/" className="absolute z-20 m-2 bottom-0 left-0">
@@ -94,6 +130,9 @@ const GraphComponent = () => {
               ),
             )}
         </h4>
+        <h5 className="w-[30%]">
+          {hover && summary} asdasdasdnasldsaljkdal ksjdklasjasda sdasdnasl dsaljkdal ksjdklasjasd asdasdna sldsaljk dalksjdklasjas dasdasdn asldsa ljkda lksj dklasj
+        </h5>
         {hover?.id}
         <br />
         {hover && hover?.type === "image" && (

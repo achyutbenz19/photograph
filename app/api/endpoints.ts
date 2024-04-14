@@ -29,3 +29,19 @@ export async function getEdges() {
   const response: AxiosResponse = await axios.get(url);
   return response?.data;
 }
+
+export async function generateSummary(node: string, neighbours: any) {
+  const data = {
+    node: node,
+    neighbours: neighbours
+  };
+  const response = await fetch(`${API_URL}/summary`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+    credentials: "include",
+  });
+  return response;
+}
